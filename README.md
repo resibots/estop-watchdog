@@ -1,5 +1,5 @@
 # A watchdog for ROS-enabled emergency-stops
-This sample code listens to a "pulse" topic sent from a ROS-enabled emergency-stop (or a gateway) to stop the software when emergency stop is pressed and restart it if released.
+This sample code listens to a "heartbeat" topic sent from a ROS-enabled emergency-stop (or a gateway) to stop the software when emergency stop is pressed and restart it if released.
 
 TODO: There should be an option for the "acknolwedge" to be required
 
@@ -13,7 +13,7 @@ TODO: drawing of the dataflow from e-stop to robot
 
 ## Dependencies
 
-- OpenSSL to check the validity of the pulse
+- OpenSSL to check the validity of the heartbeat
 
 ## Documentation
 
