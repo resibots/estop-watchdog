@@ -1,8 +1,5 @@
 #include <iostream>
 #include <cstring>
-#include <utility> // for std::pair
-// #include <algorithm>
-// #include <iterator>
 
 #include <openssl/hmac.h>
 
@@ -42,21 +39,12 @@ void new_heartbeat(const estop_gateway_udp::Heartbeat::ConstPtr& heartbeat)
 
     // Compute the hash of the message
     const uint32_t seconds = heartbeat->header.stamp.sec;
-    std::cout << std::dec << "\tSeconds: " << (int)seconds << std::endl;
     const uint16_t count = heartbeat->count;
-    std::cout << "\tCount: " << (int)count << std::endl;
 
     static constexpr size_t message_len = sizeof(seconds) + sizeof(count);
     unsigned char message[message_len];
     memcpy(message, &seconds, sizeof(seconds));
     memcpy(message + sizeof(seconds), &count, sizeof(count));
-
-    std::cout << "\tPayload" << std::endl
-              << "\t\t";
-    print_hex(message, message_len);
-
-    // std::cout << "\tSeconds: " << (int)*((uint32_t*)message) << std::endl;
-    // std::cout << "\tCount: " << (int)*((uint8_t*)message + sizeof(seconds)) << std::endl;
 
     // Based on the documentation at: https://www.openssl.org/docs/man1.0.2/crypto/HMAC_CTX_init.html
     unsigned char result[EVP_MAX_MD_SIZE];
@@ -71,15 +59,6 @@ void new_heartbeat(const estop_gateway_udp::Heartbeat::ConstPtr& heartbeat)
 
     // Compare locally_computed hash to the one we received i.e. authenticate the message
 
-    std::cout << "\tLocal hash" << std::endl
-              << "\t\t";
-    print_hex(result, result_length);
-
-    std::cout << "\tReceived hash" << std::endl
-              << "\t\t";
-    print_hex(reference_hash, result_length);
-
-    // std::equal(std::begin(result), std::end(result), std::begin((const unsigned char[])reference_hash))
     if (equal(result, reference_hash, result_length))
         std::cout << "\tHash Match !" << std::endl;
     else
@@ -101,55 +80,5 @@ int main(int argc, char** argv)
 
     ros::spin();
 
-    // char key[25], message[25];
-    // strcpy(key, "08:36:55");
-    // strcpy(message, "message");
-    //
-    // unsigned char result[EVP_MAX_MD_SIZE];
-    // unsigned int result_length;
-    // // Based on the documentation at: https://www.openssl.org/docs/man1.0.2/crypto/HMAC_CTX_init.html
-    // HMAC(EVP_sha256(), (void*)key, strlen(key), (const unsigned char*)message, strlen(message), result, &result_length);
-    //
-    // std::cout << "Local hash" << std::endl;
-    // for (unsigned int i = 0; i < result_length; ++i) {
-    //     if (i > 0)
-    //         std::cout << ':';
-    //     std::cout << std::hex << (int)result[i];
-    // }
-    // std::cout << std::endl;
-
     return 0;
 }
-
-// class HmacSha256 {
-// public:
-//     HmacSha256(const void* key, int key_len) : _key(), _key_len(key_len)
-//     {
-//         HMAC_CTX_init(&_ctx);
-//     }
-//
-//     ~HmacSha256()
-//     {
-//         HMAC_CTX_cleanup(&_ctx);
-//     }
-//
-//     std::pair<unsigned char*, unsigned int> compute(unsigned char* message, int message_len)
-//     {
-//         unsigned char result[EVP_MAX_MD_SIZE];
-//         unsigned int result_length;
-//
-//         HMAC(EVP_sha256(), (void*)key, strlen(key), (const unsigned char*)message, strlen(message), result, &result_length);
-//
-//         return std::make_pair(result, result_length);
-//     }
-//
-//     std::pair<unsigned char*, unsigned int> compute_str(unsigned char* message)
-//     {
-//         return compute(message, strlen(message));
-//     }
-//
-// private:
-//     const void* _key;
-//     const int _key_len;
-//     HMAC_CTX _ctx;
-// };
