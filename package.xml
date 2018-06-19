@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package>
-  <name>estop_watchdog</name>
+  <name>estop_trigger</name>
   <version>0.0.1</version>
   <description>Stop or restart a software based on estop heartbeat</description>
   <author email="dorian.goepp@inria.fr">Dorian Goepp</author>

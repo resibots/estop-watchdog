@@ -20,15 +20,6 @@ void print_hex(const unsigned char* array, const unsigned int array_length)
               << std::dec;
 }
 
-bool equal(const unsigned char* begin1, const unsigned char* begin2, const unsigned int length)
-{
-    for (unsigned int i = 0; i < length; ++i) {
-        if (begin1[i] != begin2[i])
-            return false;
-    }
-    return true;
-}
-
 void new_heartbeat(const estop_gateway_udp::Heartbeat::ConstPtr& heartbeat)
 {
     std::cout << "New heartbeat" << std::endl;
@@ -59,7 +50,7 @@ void new_heartbeat(const estop_gateway_udp::Heartbeat::ConstPtr& heartbeat)
 
     // Compare locally_computed hash to the one we received i.e. authenticate the message
 
-    if (equal(result, reference_hash, result_length))
+    if (memcmp(result, reference_hash, result_length) == 0)
         std::cout << "\tHash Match !" << std::endl;
     else
         std::cout << "\tHash Mismatch !" << std::endl;

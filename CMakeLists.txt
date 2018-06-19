@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(estop_watchdog)
+project(estop_trigger)
 
 # Tell CMake where to find "FindXXX.cmake"
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
@@ -28,12 +28,19 @@ include_directories(
   ${OPENSSL_INCLUDE_DIRS}
 )
 
-add_executable(watchdog_test src/watchdog_test.cpp)
-target_link_libraries(watchdog_test
+add_executable(trigger_test src/trigger_test.cpp)
+target_link_libraries(trigger_test
   ${catkin_LIBRARIES}
   ${OPENSSL_LIBRARIES}
 )
-add_dependencies(watchdog_test estop_gateway_udp_generate_messages_cpp)
+add_dependencies(trigger_test estop_gateway_udp_generate_messages_cpp)
+
+add_executable(estop_trigger src/estop_trigger.cpp)
+target_link_libraries(estop_trigger
+  ${catkin_LIBRARIES}
+  ${OPENSSL_LIBRARIES}
+)
+add_dependencies(estop_trigger estop_gateway_udp_generate_messages_cpp)
 
 # install(TARGETS hexapod_ik
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
