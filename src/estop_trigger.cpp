@@ -18,7 +18,7 @@ void print_hex(const unsigned char* array, const unsigned int array_length)
 
 namespace estop {
 
-    estopTrigger::estopTrigger(ros::NodeHandle nh,
+    EStopTrigger::EStopTrigger(ros::NodeHandle nh,
         ros::Duration max_interval,
         std::function<void()> stop_callback,
         std::function<void()> resume_callback,
@@ -32,14 +32,14 @@ namespace estop {
         // boolean options : enable oneshot, disable autostart
         // TODO: once we move on from Kinetic Kame, use the line below
         // _timer = nh.createSteadyTimer(max_interval, callback, true, false);
-        _timer = nh.createTimer(max_interval, &estopTrigger::timeout_callback, this, true, false);
+        _timer = nh.createTimer(max_interval, &EStopTrigger::timeout_callback, this, true, false);
         // TODO: decide the action to do in this case. The object cannot be used.
         if (!_timer) {
             ROS_ERROR_STREAM("We failed creating the trigger timer.");
             throw Exception("We failed creating the trigger timer.");
         }
 
-        _heartbeat_subscriber = _nh.subscribe("heartbeat", 1, &estopTrigger::heartbeat_callback, this);
+        _heartbeat_subscriber = _nh.subscribe("heartbeat", 1, &EStopTrigger::heartbeat_callback, this);
         // TODO: decide the action to do in this case. The object cannot be used.
         if (!_heartbeat_subscriber) {
             ROS_ERROR_STREAM("We failed subscribing to the heartbeat topic.");
@@ -47,22 +47,22 @@ namespace estop {
         }
     }
 
-    estopTrigger::~estopTrigger()
+    EStopTrigger::~EStopTrigger()
     {
         _timer.stop();
     }
 
-    void estopTrigger::wake()
+    void EStopTrigger::sleep()
+    {
+        _timer.stop();
+    }
+
+    void EStopTrigger::wake()
     {
         _timer.start();
     }
 
-    void estopTrigger::sleep()
-    {
-        _timer.stop();
-    }
-
-    void estopTrigger::heartbeat_callback(const estop_gateway_udp::Heartbeat::ConstPtr& heartbeat)
+    void EStopTrigger::heartbeat_callback(const estop_gateway_udp::Heartbeat::ConstPtr& heartbeat)
     {
         if (check_heartbeat(heartbeat))
             feed();
@@ -70,7 +70,7 @@ namespace estop {
             ROS_DEBUG("An invalid heartbeat just arrived.");
     }
 
-    void estopTrigger::feed()
+    void EStopTrigger::feed()
     {
         _timer.stop();
         _timer.start();
@@ -81,13 +81,13 @@ namespace estop {
         ROS_DEBUG("Feeding the dog");
     }
 
-    void estopTrigger::timeout_callback(const ros::TimerEvent&)
+    void EStopTrigger::timeout_callback(const ros::TimerEvent&)
     {
         _timeout = true;
         _stop_callback();
     }
 
-    bool estopTrigger::check_heartbeat(const estop_gateway_udp::Heartbeat::ConstPtr& heartbeat)
+    bool EStopTrigger::check_heartbeat(const estop_gateway_udp::Heartbeat::ConstPtr& heartbeat)
     {
         // ROS_DEBUG("Heartbeat received");
 
@@ -155,7 +155,7 @@ int main(int argc, char** argv)
     // TODO: read key from file, which path is provided by a parameter
     std::vector<uint8_t> key = {48, 56, 58, 51, 54, 58, 53, 53}; // "08:36:55"
 
-    estopTrigger etrigger(nh,
+    EStopTrigger etrigger(nh,
         max_interval,
         &alerte,
         &ouf,

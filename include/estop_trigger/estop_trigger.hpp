@@ -13,27 +13,29 @@ namespace estop {
 
         Add the option to notify the user if an invalid message was received
     **/
-    class estopTrigger {
+    class EStopTrigger {
     public:
-        estopTrigger(ros::NodeHandle nh,
+        EStopTrigger(ros::NodeHandle nh,
             ros::Duration max_interval,
             std::function<void()> stop_callback,
             std::function<void()> resume_callback,
             std::vector<uint8_t> key);
         // arguments : topic name, key
 
-        ~estopTrigger();
+        ~EStopTrigger();
 
-        void wake();
+        /// Put the watchdog to sleep. It will not trigger even if it is not fed
         void sleep();
+        /// Wake the watchdog. Now it needs to be fed again or it will bite.
+        void wake();
 
         // TODO: something to notify the user that the heartbeat resumed (after they stopped behond max_interval)
         // TODO: better callback interface, not requiring to accept a TimerEvent (unless relevant)
 
     private:
         // Don't define these functions, we don't want them to exist
-        estopTrigger& operator=(estopTrigger&);
-        estopTrigger(estopTrigger&);
+        EStopTrigger& operator=(EStopTrigger&);
+        EStopTrigger(EStopTrigger&);
 
         void heartbeat_callback(const estop_gateway_udp::Heartbeat::ConstPtr& heartbeat);
         // Feed the trigger, restarting the timer.
