@@ -4,12 +4,14 @@
 
 #include <ros/ros.h>
 
+#include <memory>
+
+std::shared_ptr<ros::ServiceClient> client;
+
 bool switch_controllers(bool enable = false)
 {
     std::string service = "/controller_manager/switch_controller";
 
-    ros::ServiceClient client
-        = nh.serviceClient<controller_manager_msgs::SwitchController>(service);
     controller_manager_msgs::SwitchController srv;
 
     std::vector<std::string> start_controllers, stop_controllers;
@@ -22,7 +24,7 @@ bool switch_controllers(bool enable = false)
 
     srv.request.strictness = srv.request.BEST_EFFORT;
 
-    if (client.call(srv)) {
+    if (client->call(srv)) {
         ROS_INFO_STREAM("Service call succeeded. The controllers were"
             << (srv.response.ok ? "" : " NOT") << " switched.");
     }
@@ -60,8 +62,7 @@ int main(int argc, char** argv)
     std::string service = "/controller_manager/switch_controller";
     if (ros::service::waitForService(service, 1000)) {
         ROS_INFO("The required service was found");
-        ros::ServiceClient client
-            = nh.serviceClient<controller_manager_msgs::SwitchController>(service);
+        client = std::make_shared<ros::ServiceClient>(nh.serviceClient<controller_manager_msgs::SwitchController>(service));
         controller_manager_msgs::SwitchController srv;
         std::vector<std::string> start_controllers, stop_controllers;
         start_controllers.push_back("/dynamixel_controllers/joint_state_controller");
@@ -69,7 +70,7 @@ int main(int argc, char** argv)
         srv.request.strictness = srv.request.BEST_EFFORT;
         srv.request.start_controllers = start_controllers;
         srv.request.stop_controllers = stop_controllers;
-        if (client.call(srv)) {
+        if (client->call(srv)) {
             ROS_INFO_STREAM("Service call succeeded. The controllers were"
                 << (srv.response.ok ? "" : " NOT") << " switched.");
         }
