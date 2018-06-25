@@ -8,6 +8,13 @@ We use this software in [`dynamixel_control_hw`][dynamixel_control_hw] and [`you
 
 <!-- TODO: drawing of the data flow from e-stop to robot -->
 
+## Parameters
+
+| name         | description                                                  |
+| ------------ | ------------------------------------------------------------ |
+| key_path     | path to the file containing the signature key                |
+| max_interval | highest allowed time interval between two heartbeat messages |
+
 ## Authors
 
 - Author/Maintainer: Dorian Goepp

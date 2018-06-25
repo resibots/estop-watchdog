@@ -16,11 +16,8 @@ namespace estop {
     class EStopTrigger {
     public:
         EStopTrigger(ros::NodeHandle nh,
-            ros::Duration max_interval,
             std::function<void()> stop_callback,
-            std::function<void()> resume_callback,
-            std::vector<uint8_t> key);
-        // arguments : topic name, key
+            std::function<void()> resume_callback);
 
         ~EStopTrigger();
 

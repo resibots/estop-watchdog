@@ -5,34 +5,99 @@
 
 #include <openssl/hmac.h>
 
-void print_hex(const unsigned char* array, const unsigned int array_length)
+#include <fstream>
+#include <iostream>
+#include <sstream>
+
+std::stringstream print_hex(const unsigned char* array, const unsigned int array_length)
 {
+    std::stringstream out;
     for (unsigned int i = 0; i < array_length; ++i) {
         if (i > 0)
-            std::cout << ':';
-        std::cout << std::hex << (int)array[i];
+            out << ':';
+        out << std::hex << (int)array[i];
     }
-    std::cout << std::endl
+    out << std::endl
               << std::dec;
+
+    return out;
 }
+
+std::stringstream print_key(std::vector<uint8_t> array)
+{
+    std::stringstream out;
+    for (unsigned int i = 0; i < array.size(); ++i) {
+        if (i > 0)
+            out << ':';
+        out << (int)array[i];
+    }
+    out << std::endl;
+
+    return out;
+}
+
 
 namespace estop {
 
     EStopTrigger::EStopTrigger(ros::NodeHandle nh,
-        ros::Duration max_interval,
         std::function<void()> stop_callback,
-        std::function<void()> resume_callback,
-        std::vector<uint8_t> key)
-        : _nh(nh), _key(key), _stop_callback(stop_callback), _resume_callback(resume_callback)
+        std::function<void()> resume_callback)
+        : _nh(nh), _stop_callback(stop_callback), _resume_callback(resume_callback)
     {
-        // An empty key should not be accepted
-        if (0 == _key.size())
-            throw Exception("The key provided is empty (size 0), there must be a mistake.");
+
+        // Get the key
+        std::string key_path;
+        if (!_nh.getParam("key_path", key_path)) {
+            ROS_ERROR("The parameter key_path is missing (and required)");
+            throw Exception("The parameter key_path is missing (and required)");
+        }
+        std::ifstream file(key_path,
+            std::ios::in | std::ios::binary | std::ios::ate);
+        if (file.is_open()) {
+            std::streampos size = file.tellg();
+            // huge limit for key size
+            if (size > 10240) {
+                std::stringstream message;
+                message << "The key size is too big ("
+                        << (int)size << ">>10240) and the limit is already "
+                        << "unreasonably big!";
+                ROS_FATAL_STREAM(message.str());
+                throw Exception(message.str());
+            }
+            if (0 == size) {
+                ROS_ERROR("The key provided is empty (size 0), there "
+                          "must be a mistake.");
+                throw Exception("The key provided is empty (size 0), there "
+                                "must be a mistake.");
+            }
+            _key.resize(size);
+
+            file.seekg(0, std::ios::beg); // to begining of file
+            file.read((char*)_key.data(), size); // read the whole file
+            file.close();
+        }
+        else {
+            std::stringstream message;
+            message << "The key file '" << key_path
+                    << "' could not be opened. Check the path and "
+                    << "authorisations.";
+            ROS_FATAL_STREAM(message.str());
+            throw Exception(message.str());
+        }
+
+        // Get the maximal time interval between two heartbeats
+        double max_interval_param = 0;
+        if (!_nh.getParam("max_interval", max_interval_param)) {
+            ROS_ERROR("The parameter max_interval is missing (and required)");
+            throw Exception("The parameter max_interval is missing (and required)");
+        }
+        ros::Duration max_interval(max_interval_param);
+        ROS_DEBUG_STREAM("We got the following duration: " << max_interval.toSec());
 
         // boolean options : enable oneshot, disable autostart
         // TODO: once we move on from Kinetic Kame, use the line below
-        // _timer = nh.createSteadyTimer(max_interval, callback, true, false);
-        _timer = nh.createTimer(max_interval, &EStopTrigger::timeout_callback, this, true, false);
+        // _timer = _nh.createSteadyTimer(max_interval, callback, true, false);
+        _timer = _nh.createTimer(max_interval, &EStopTrigger::timeout_callback, this, true, false);
         // TODO: decide the action to do in this case. The object cannot be used.
         if (!_timer) {
             ROS_ERROR_STREAM("We failed creating the trigger timer.");
