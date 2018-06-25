@@ -154,7 +154,7 @@ namespace estop {
 
     bool EStopTrigger::check_heartbeat(const estop_gateway_udp::Heartbeat::ConstPtr& heartbeat)
     {
-        // ROS_DEBUG("Heartbeat received");
+        ROS_DEBUG("Heartbeat received");
 
         // Compute the hash of the message
 

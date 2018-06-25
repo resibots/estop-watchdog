@@ -26,9 +26,6 @@ namespace estop {
         /// Wake the watchdog. Now it needs to be fed again or it will bite.
         void wake();
 
-        // TODO: something to notify the user that the heartbeat resumed (after they stopped behond max_interval)
-        // TODO: better callback interface, not requiring to accept a TimerEvent (unless relevant)
-
     private:
         // Don't define these functions, we don't want them to exist
         EStopTrigger& operator=(EStopTrigger&);
