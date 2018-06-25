@@ -13,6 +13,8 @@ We intend to use this software for [`dynamixel_control_hw`][dynamixel_control_hw
 > - check that the message is not too old
 > - check that the counter is strictly increasing (for a given second) and that seconds are ever increasing
 >
+> Also, the node `ros_control_trigger` is not finished yet, although the main ideas are already there. Please note that this node is a first integration of the emergency-stop protocol for ros_control, based on [the discussion in a git issue][discussion_issue]. It is incorrect and MUST be redesigned later. Indeed, if this node fails, the emergency stop could never make the robot stop. A better approach, although more invasive, would be to integrate with the control loop, that has direct access to the controller manager.
+>
 > A decision should be made also on how to nicely stop the node if the setup phase fails.
 
 ## Parameters of the sample nodes
@@ -41,3 +43,4 @@ We intend to use this software for [`dynamixel_control_hw`][dynamixel_control_hw
 [CeCILL-C]: http://www.cecill.info/index.en.html
 [esp8266-estop]: https://gitlab.inria.fr/dgoepp/esp8266_e_stop
 [gateway]: https://gitlab.inria.fr/dgoepp/estop-gateway
+[discussion_issue]: https://github.com/ros-controls/ros_control/issues/129
