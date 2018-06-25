@@ -18,7 +18,7 @@ std::stringstream print_hex(const unsigned char* array, const unsigned int array
         out << std::hex << (int)array[i];
     }
     out << std::endl
-              << std::dec;
+        << std::dec;
 
     return out;
 }
@@ -199,36 +199,3 @@ namespace estop {
         //  and that seconds are ever increasing
     }
 } // namespace estop
-
-void alerte(void)
-{
-    std::cout << "Waf Waf Waf ! J'ai faim ! Oh, mais c'est une belle jambe bien dodue que je vois là !" << std::endl;
-}
-
-void ouf(void)
-{
-    std::cout << "Le chien est repus, nous sommes saufs." << std::endl;
-}
-
-using namespace estop;
-
-int main(int argc, char** argv)
-{
-    ros::init(argc, argv, "estop_trigger");
-    ros::NodeHandle nh("~");
-    ros::Duration max_interval(0.50); // five seconds
-    // TODO: read key from file, which path is provided by a parameter
-    std::vector<uint8_t> key = {48, 56, 58, 51, 54, 58, 53, 53}; // "08:36:55"
-
-    EStopTrigger etrigger(nh,
-        max_interval,
-        &alerte,
-        &ouf,
-        key);
-
-    etrigger.wake();
-
-    ros::spin();
-
-    return 0;
-}

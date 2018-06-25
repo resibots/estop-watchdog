@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+
+<launch>
+  <rosparam file="$(find estop_trigger)/config/sample.yaml"/>
+
+  <!-- Publish robot's state in the tf tree -->
+  <node pkg="estop_trigger" type="estop_trigger"
+        name="sample_trigger" output="screen">
+    <remap from="~heartbeat" to="/heartbeat"/>
+  </node>
+</launch>
