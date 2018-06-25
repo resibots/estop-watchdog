@@ -28,13 +28,6 @@ include_directories(
   ${OPENSSL_INCLUDE_DIRS}
 )
 
-add_executable(trigger_test src/trigger_test.cpp)
-target_link_libraries(trigger_test
-  ${catkin_LIBRARIES}
-  ${OPENSSL_LIBRARIES}
-)
-add_dependencies(trigger_test estop_gateway_udp_generate_messages_cpp)
-
 add_executable(estop_trigger src/estop_trigger_sample.cpp src/estop_trigger.cpp)
 target_link_libraries(estop_trigger
   ${catkin_LIBRARIES}
