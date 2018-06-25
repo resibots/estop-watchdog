@@ -1,14 +1,21 @@
 # A trigger for ROS-enabled emergency-stops
 
-This sample code listens to a "heartbeat" topic sent from a ROS-enabled emergency-stop (or a gateway) to stop the software when emergency stop is pressed and restart it if released.
+This sample code listens to a "heartbeat" topic sent from a ROS-enabled emergency-stop (or a gateway). It will stop the software when emergency stop is pressed and restart it if released.
 
-TODO: There should be an option for the "acknowledge" to be required
+The heartbeats follow a basic signature and timing scheme that should avoid crosstalk over different emergency stop publishers.
 
-We use this software in [`dynamixel_control_hw`][dynamixel_control_hw] and [`youbot_driver_ros_interface`][youbot_driver_ros_interface] for our robots. On the other end of the line, we use our [Wifi emergency stop][esp8266-estop] and the corresponding [ROS gateway][gateway].
+We intend to use this software for [`dynamixel_control_hw`][dynamixel_control_hw] and [`youbot_driver_ros_interface`][youbot_driver_ros_interface] for our robots. On the other end of the line, the original heartbeat is produced by our [Wifi emergency stop button][esp8266-estop] and the corresponding [ROS gateway][gateway] that converts the UDP packets to a ROS topic.
 
 <!-- TODO: drawing of the data flow from e-stop to robot -->
 
-## Parameters
+> **Caution**: this implementation of the heartbeat protocol is not complete yet and misses the following features:
+>
+> - check that the message is not too old
+> - check that the counter is strictly increasing (for a given second) and that seconds are ever increasing
+>
+> A decision should be made also on how to nicely stop the node if the setup phase fails.
+
+## Parameters of the sample nodes
 
 | name         | description                                                  |
 | ------------ | ------------------------------------------------------------ |
