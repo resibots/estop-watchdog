@@ -1,10 +1,10 @@
 # A trigger for ROS-enabled emergency-stops
 
-This sample code listens to a "heartbeat" topic sent from a ROS-enabled emergency-stop (or a gateway). It will stop the software when emergency stop is pressed and restart it if released.
+This sample code listens to a "heartbeat" topic sent from a ROS-enabled emergency-stop (or a gateway to ROS-incompatible one). It uses two callbacks to stop something when the emergency stop is pressed and restart it if released.
 
 The heartbeats follow a basic signature and timing scheme that should avoid crosstalk over different emergency stop publishers.
 
-We intend to use this software for [`dynamixel_control_hw`][dynamixel_control_hw] and [`youbot_driver_ros_interface`][youbot_driver_ros_interface] for our robots. On the other end of the line, the original heartbeat is produced by our [Wifi emergency stop button][esp8266-estop] and the corresponding [ROS gateway][gateway] that converts the UDP packets to a ROS topic.
+We intend to use this software for [`dynamixel_control_hw`][dynamixel_control_hw] and [`youbot_driver_ros_interface`][youbot_driver_ros_interface] for our robots. On the other end of the line, we have our [Wifi emergency stop button][esp8266-estop] produce the original heartbeat and a [ROS gateway][gateway] converts the UDP packets to a ROS topic.
 
 <!-- TODO: drawing of the data flow from e-stop to robot -->
 
@@ -17,12 +17,23 @@ We intend to use this software for [`dynamixel_control_hw`][dynamixel_control_hw
 >
 > A decision should be made also on how to nicely stop the node if the setup phase fails.
 
+## Assumptions
+
+Some of the assumptions that we make for this system to work well:
+
+- no one will fuss with the ros parameters, for instance increasing the `max_interval` parameter to an unreasonably high value
+- the key file is not reachable by undesired parties
+
 ## Parameters of the sample nodes
 
 | name         | description                                                  |
 | ------------ | ------------------------------------------------------------ |
 | key_path     | path to the file containing the signature key                |
-| max_interval | highest allowed time interval between two heartbeat messages |
+| max_interval | highest allowed time interval between two heartbeat messages (in ms)|
+
+## Usage
+
+A sample program, `estop_trigger_sample` is provided for the user to see how this code is meant to be used. It can be run with the provided launch file and configuration. Remember, however, to put the actual path to the key in the configuration file (`config/sample.yaml`).
 
 ## Authors
 
@@ -32,11 +43,9 @@ We intend to use this software for [`dynamixel_control_hw`][dynamixel_control_hw
 
 - OpenSSL to check the validity of the heartbeat
 
-## Documentation
-
 ## LICENSE
 
-[CeCILL-C]
+Unless stated otherwise, this work is published under the terms of the [CeCILL-C] license.
 
 [dynamixel_control_hw]: https://github.com/resibots/dynamixel_control_hw/
 [youbot_driver_ros_interface]: https://github.com/youbot/youbot_driver_ros_interface
