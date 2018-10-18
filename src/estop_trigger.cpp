@@ -1,4 +1,4 @@
-#include <estop_gateway_udp/Heartbeat.h>
+#include <estop_gateway/Heartbeat.h>
 #include <estop_trigger/estop_trigger.hpp>
 #include <estop_trigger/exception.hpp>
 #include <ros/ros.h>
@@ -129,7 +129,7 @@ namespace estop {
         _timer.start();
     }
 
-    void EStopTrigger::heartbeat_callback(const estop_gateway_udp::Heartbeat::ConstPtr& heartbeat)
+    void EStopTrigger::heartbeat_callback(const estop_gateway::Heartbeat::ConstPtr& heartbeat)
     {
         if (check_heartbeat(heartbeat))
             feed();
@@ -154,7 +154,7 @@ namespace estop {
         _stop_callback();
     }
 
-    bool EStopTrigger::check_heartbeat(const estop_gateway_udp::Heartbeat::ConstPtr& heartbeat)
+    bool EStopTrigger::check_heartbeat(const estop_gateway::Heartbeat::ConstPtr& heartbeat)
     {
         ROS_DEBUG("Heartbeat received");
 

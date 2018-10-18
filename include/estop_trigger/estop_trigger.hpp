@@ -1,6 +1,6 @@
 #include <ros/ros.h>
 // #include <ros/forwards.h>
-#include <estop_gateway_udp/Heartbeat.h>
+#include <estop_gateway/Heartbeat.h>
 
 namespace estop {
     /** Utility : method to search the key based on a ROS parameter name that points to a file
@@ -31,12 +31,12 @@ namespace estop {
         EStopTrigger& operator=(EStopTrigger&);
         EStopTrigger(EStopTrigger&);
 
-        void heartbeat_callback(const estop_gateway_udp::Heartbeat::ConstPtr& heartbeat);
+        void heartbeat_callback(const estop_gateway::Heartbeat::ConstPtr& heartbeat);
         // Feed the trigger, restarting the timer.
         void feed();
         void timeout_callback(const ros::TimerEvent&);
 
-        bool check_heartbeat(const estop_gateway_udp::Heartbeat::ConstPtr& heartbeat);
+        bool check_heartbeat(const estop_gateway::Heartbeat::ConstPtr& heartbeat);
 
         ros::NodeHandle _nh;
         ros::Subscriber _heartbeat_subscriber;

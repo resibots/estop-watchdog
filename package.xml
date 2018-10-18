@@ -9,7 +9,7 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <build_depend>estop_gateway_udp</build_depend>
+  <build_depend>estop_gateway</build_depend>
 
-  <run_depend>estop_gateway_udp</run_depend>
+  <run_depend>estop_gateway</run_depend>
 </package>
