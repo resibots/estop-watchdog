@@ -9,35 +9,34 @@
 #include <iostream>
 #include <sstream>
 
-std::stringstream print_hex(const unsigned char* array, const unsigned int array_length)
-{
-    std::stringstream out;
-    for (unsigned int i = 0; i < array_length; ++i) {
-        if (i > 0)
-            out << ':';
-        out << std::hex << (int)array[i];
-    }
-    out << std::endl
-        << std::dec;
-
-    return out;
-}
-
-std::stringstream print_key(std::vector<uint8_t> array)
-{
-    std::stringstream out;
-    for (unsigned int i = 0; i < array.size(); ++i) {
-        if (i > 0)
-            out << ':';
-        out << (int)array[i];
-    }
-    out << std::endl;
-
-    return out;
-}
-
-
 namespace estop {
+
+    std::stringstream print_hex(const unsigned char* array, const unsigned int array_length)
+    {
+        std::stringstream out;
+        for (unsigned int i = 0; i < array_length; ++i) {
+            if (i > 0)
+                out << ':';
+            out << std::hex << (int)array[i];
+        }
+        out << std::endl
+            << std::dec;
+
+        return out;
+    }
+
+    std::stringstream print_key(std::vector<uint8_t> array)
+    {
+        std::stringstream out;
+        for (unsigned int i = 0; i < array.size(); ++i) {
+            if (i > 0)
+                out << ':';
+            out << (int)array[i];
+        }
+        out << std::endl;
+
+        return out;
+    }
 
     EStopTrigger::EStopTrigger(ros::NodeHandle nh,
         std::function<void()> stop_callback,
