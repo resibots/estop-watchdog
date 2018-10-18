@@ -99,15 +99,18 @@ namespace estop {
         _timer = _nh.createTimer(max_interval, &EStopTrigger::timeout_callback, this, true, false);
         // TODO: decide the action to do in this case. The object cannot be used.
         if (!_timer) {
-            ROS_ERROR_STREAM("We failed creating the trigger timer.");
+            ROS_FATAL_STREAM("We failed creating the trigger timer.");
             throw Exception("We failed creating the trigger timer.");
         }
 
         _heartbeat_subscriber = _nh.subscribe("heartbeat", 1, &EStopTrigger::heartbeat_callback, this);
         // TODO: decide the action to do in this case. The object cannot be used.
         if (!_heartbeat_subscriber) {
-            ROS_ERROR_STREAM("We failed subscribing to the heartbeat topic.");
-            throw Exception("We failed subscribing to the heartbeat topic.");
+            std::stringstream message;
+            message << "We failed subscribing to the "
+                    << nh.resolveName("heartbeat") << " topic.";
+            ROS_ERROR_STREAM(message.str());
+            throw Exception(message.str());
         }
     }
 
