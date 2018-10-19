@@ -35,6 +35,16 @@ Some of the assumptions that we make for this system to work well:
 
 A sample program, `estop_trigger_sample` is provided for the user to see how this code is meant to be used. It can be run with the provided launch file and configuration. Remember, however, to put the actual path to the key in the configuration file (`config/sample.yaml`).
 
+## Future improvements
+
+### Reset the controllers when resuming
+
+When the emergency button is released and the hardware interface would be enabled again, we should have the `update` method of the controller manager be called with the argument `reset_controller` set to true, so that all controllers are stopped and started. This should avoid unwanted behaviour, such as the robot continuing on the course that made us trigger the emergency stop.
+
+### Integrate directly with the hardware interfaces
+
+We would like to have the hardware interfaces be directly told to stop the actuators and ignore the commands sent by the controllers. Actually, we would like to let the hardware interface decide of what policy to be enforced when the emergency button is pressed. To do so, we beleive that there should be two methods added in the hardware interface and combined hardware interface, in ros control. For more on the matter, se [this pull request on Github](https://github.com/ros-controls/ros_control/pull/294).
+
 ## Authors
 
 - Author/Maintainer: Dorian Goepp
